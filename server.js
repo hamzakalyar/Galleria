@@ -21,7 +21,7 @@ const basicAuth = (req, res, next) => {
   const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
   const [login, password] = Buffer.from(b64auth, 'base64').toString().split(':');
 
-  if (login === 'hamza' && password === '01hamza@') {
+  if (login === 'hamza' && password === '02hamza@') {
     return next();
   }
   res.set('WWW-Authenticate', 'Basic realm="401"');
