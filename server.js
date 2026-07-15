@@ -28,9 +28,7 @@ const basicAuth = (req, res, next) => {
   res.status(401).send('Authentication required.');
 };
 
-app.use('/admin.html', basicAuth);
-
-app.get('/admin.html', (req, res) => {
+app.get('/admin.html', basicAuth, (req, res) => {
   res.sendFile(path.join(BASE_DIR, 'views', 'admin.html'));
 });
 
