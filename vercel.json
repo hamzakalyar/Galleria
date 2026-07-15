@@ -6,7 +6,7 @@
       "destination": "/server.js"
     },
     {
-      "source": "/admin.html",
+      "source": "/zeetech-admin",
       "destination": "/server.js"
     }
   ]

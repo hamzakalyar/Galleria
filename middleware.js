@@ -1,5 +1,5 @@
 export const config = {
-  matcher: ['/admin.html', '/api/upload', '/api/delete'],
+  matcher: ['/zeetech-admin', '/api/upload', '/api/delete'],
 };
 
 export default function middleware(request) {
