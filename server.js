@@ -24,12 +24,16 @@ const basicAuth = (req, res, next) => {
   if (login === 'hamza' && password === '01hamza@') {
     return next();
   }
-  res.set('WWW-Authenticate', 'Basic realm="401"');
-  res.status(401).send('Authentication required.');
+  
+  res.status(401).json({ error: 'Authentication required.' });
 };
 
-app.get('/zeetech-admin', basicAuth, (req, res) => {
+app.get('/zeetech-admin', (req, res) => {
   res.sendFile(path.join(BASE_DIR, 'views', 'admin.html'));
+});
+
+app.post('/api/verify', basicAuth, (req, res) => {
+  res.json({ success: true });
 });
 
 app.use('/api/upload', basicAuth);
