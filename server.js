@@ -29,6 +29,11 @@ const basicAuth = (req, res, next) => {
 };
 
 app.use('/admin.html', basicAuth);
+
+app.get('/admin.html', (req, res) => {
+  res.sendFile(path.join(BASE_DIR, 'views', 'admin.html'));
+});
+
 app.use('/api/upload', basicAuth);
 app.use('/api/delete', basicAuth);
 
