@@ -31,7 +31,11 @@ const basicAuth = (req, res, next) => {
 app.use('/admin.html', basicAuth);
 app.use('/api/upload', basicAuth);
 app.use('/api/delete', basicAuth);
-app.use(express.static(BASE_DIR));
+
+// Serve frontend files
+app.use(express.static(path.join(BASE_DIR, 'public')));
+// Serve local images
+app.use(express.static(path.join(BASE_DIR, 'uploads')));
 
 // Multer setup for local fallback
 const upload = multer({
@@ -39,7 +43,7 @@ const upload = multer({
     destination: (req, file, cb) => {
       const category = req.body.category;
       if (!SECTIONS.includes(category)) return cb(new Error('Invalid category'), false);
-      const dir = path.join(BASE_DIR, category);
+      const dir = path.join(BASE_DIR, 'uploads', category);
       if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
       cb(null, dir);
     },
@@ -72,7 +76,7 @@ app.get('/api/manifest', async (req, res) => {
   } else {
     // Local File System
     SECTIONS.forEach(section => {
-      const dir = path.join(BASE_DIR, section);
+      const dir = path.join(BASE_DIR, 'uploads', section);
       if (fs.existsSync(dir)) {
         const files = fs.readdirSync(dir).filter(f => /\.(jpg|jpeg|png|webp|gif)$/i.test(f));
         manifest[section] = files.map(f => ({ filename: f, url: `/${section}/${encodeURIComponent(f)}` }));
@@ -123,8 +127,8 @@ app.delete('/api/delete', async (req, res) => {
       res.status(500).json({ error: 'Failed to delete from Vercel Blob' });
     }
   } else {
-    const filePath = path.join(BASE_DIR, category, filename);
-    if (!filePath.startsWith(path.join(BASE_DIR, category))) return res.status(403).json({ error: 'Forbidden' });
+    const filePath = path.join(BASE_DIR, 'uploads', category, filename);
+    if (!filePath.startsWith(path.join(BASE_DIR, 'uploads', category))) return res.status(403).json({ error: 'Forbidden' });
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
       res.json({ success: true });
