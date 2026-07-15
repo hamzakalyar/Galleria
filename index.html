@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zeetech</title>
+  <meta name="description" content="Refined architecture and interior design, meticulously crafted for modern living." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="gallery.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════ NAVBAR ═══════════════════════════════ -->
+  <nav class="navbar" id="navbar">
+    <div class="container nav-container">
+      <span class="logo">Zeetech</span>
+      <div class="nav-links" id="navLinks">
+        <a href="#top"          class="nav-link">Home</a>
+        <a href="#gallery"      class="nav-link" data-cat="kitchen">Kitchen</a>
+        <a href="#gallery"      class="nav-link" data-cat="washroom">Washroom</a>
+        <a href="#gallery"      class="nav-link" data-cat="ceiling">Ceiling</a>
+        <a href="#gallery"      class="nav-link" data-cat="floor">Floor</a>
+        <a href="#gallery"      class="nav-link" data-cat="stairs">Stairs</a>
+      </div>
+      <a href="#selected-works" class="btn btn-primary">Get a Quote</a>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════ HERO ════════════════════════════════ -->
+  <section class="hero" id="top">
+    <!-- Image — right side, mask fades left edge -->
+    <div class="hero-image-wrapper">
+      <img id="heroBgImg" src="" alt="Interior" class="hero-bg" />
+    </div>
+    <!-- Text content -->
+    <div class="container hero-content reveal">
+      <div class="hero-accent-line"></div>
+      <h1 class="hero-title">Spatial<br/><span class="text-accent">Silence.</span></h1>
+      <p class="hero-subtitle">Refined architecture and interior design, meticulously<br/>crafted for modern living.</p>
+      <a href="#selected-works" class="btn btn-outline">Explore Work</a>
+    </div>
+    <!-- Scroll indicator -->
+    <div class="hero-scroll reveal">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ SELECTED WORKS ══════════════════════════ -->
+  <section class="section container" id="selected-works">
+    <div class="reveal">
+      <h2 class="title">Selected Works</h2>
+      <p class="subtitle">A curated collection of our finest <span class="text-accent">kitchen</span>, washroom, ceiling, floor, and stairs designs.</p>
+    </div>
+    <div class="featured-grid" id="featuredGrid"></div>
+    <div id="featuredLoadMore" style="text-align:center;margin-top:4rem;display:none;">
+      <button class="btn btn-outline" id="featuredLoadBtn">Load More</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════ ARCHIVE ═══════════════════════════════ -->
+  <section class="section container" id="gallery">
+    <div class="reveal">
+      <h2 class="title" style="text-align:center">Archive</h2>
+    </div>
+    <div class="gallery-filters reveal" id="galleryFilters">
+      <button class="filter-btn active" data-cat="all">All</button>
+      <button class="filter-btn" data-cat="kitchen">Kitchen</button>
+      <button class="filter-btn" data-cat="washroom">Washroom</button>
+      <button class="filter-btn" data-cat="ceiling">Ceiling</button>
+      <button class="filter-btn" data-cat="floor">Floor</button>
+      <button class="filter-btn" data-cat="stairs">Stairs</button>
+    </div>
+    <div class="masonry-grid" id="masonryGrid"></div>
+    <div id="galleryLoadMore" style="text-align:center;margin-top:4rem;display:none;">
+      <button class="btn btn-outline" id="galleryLoadBtn">Load More</button>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════ CTA BANNER ═══════════════════════════ -->
+  <section class="cta-banner reveal">
+    <div class="container">
+      <h2>Ready to elevate your space?</h2>
+      <p class="subtitle" style="margin:0 auto 3rem;color:var(--color-text)">Let's discuss your next architectural project.</p>
+      <a href="#contact" class="btn btn-primary">Start a Conversation</a>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ STUDIO / CONTACT ═══════════════════════ -->
+  <section id="contact" class="section container">
+    <div class="contact-grid">
+      <div class="reveal">
+        <h2 class="title">Studio</h2>
+        <p class="subtitle" style="color:var(--color-text)">
+          Zeetech believes in the power of restraint. We strip away the unnecessary to reveal the essential character of a space. Our commitment is to timeless design and flawless execution.
+        </p>
+        <div class="contact-info" style="margin-top:4rem">
+          <div class="info-item">
+            <h4>Inquiries</h4>
+            <p>hamzaimtiaz9970@gmail.com</p>
+          </div>
+          <div class="info-item">
+            <h4>Call / WhatsApp</h4>
+            <p>03020000973</p>
+          </div>
+          <div class="info-item">
+            <h4>Location</h4>
+            <p>Islamabad, Pakistan</p>
+          </div>
+        </div>
+      </div>
+      <div class="reveal">
+        <form class="contact-form" onsubmit="return false">
+          <input type="text"  class="form-control" placeholder="Name"  required />
+          <input type="email" class="form-control" placeholder="Email" required />
+          <select class="form-control" required style="appearance:none;background:transparent">
+            <option value="" disabled selected>Project Type</option>
+            <option>Kitchen Design</option>
+            <option>Washroom Design</option>
+            <option>Ceiling Design</option>
+            <option>Floor Design</option>
+            <option>Stairs Design</option>
+          </select>
+          <textarea class="form-control" rows="4" placeholder="Tell us about your project..." required style="resize:none"></textarea>
+          <button type="submit" class="btn btn-primary" style="align-self:flex-start;margin-top:1rem">Submit Inquiry</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-logo">Zeetech</div>
+      <div class="footer-copy">&copy; <span id="footerYear"></span> Zeetech. All Rights Reserved.</div>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════ LIGHTBOX ═════════════════════════════ -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+    <button class="lightbox-close" id="lbClose" aria-label="Close">&#x2715;</button>
+    <button class="lightbox-nav lightbox-prev" id="lbPrev" aria-label="Previous">&#8249;</button>
+    <div class="lightbox-content">
+      <img id="lbImg" class="lightbox-media" src="" alt="" />
+    </div>
+    <button class="lightbox-nav lightbox-next" id="lbNext" aria-label="Next">&#8250;</button>
+  </div>
+
+  <script src="gallery.js"></script>
+</body>
+</html>

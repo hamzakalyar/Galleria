@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Zeetech Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f9f9f8;
+      --surface: #ffffff;
+      --text: #1a1a1a;
+      --text-light: #5f5f5f;
+      --accent: #b48e5d;
+      --accent-hover: #9c7849;
+      --border: #e0e0e0;
+      --danger: #e74c3c;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+    
+    body { background: var(--bg); color: var(--text); padding: 40px 20px; }
+    
+    .container { max-width: 1100px; margin: 0 auto; }
+    
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+    .header h1 { font-size: 2.5rem; font-weight: 300; letter-spacing: -1px; }
+    .header a { color: var(--text-light); text-decoration: none; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; border: 1px solid var(--border); padding: 10px 20px; transition: 0.3s; }
+    .header a:hover { background: var(--text); color: #fff; }
+
+    /* Upload Card */
+    .upload-card { background: var(--surface); padding: 40px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-bottom: 50px; }
+    .upload-card h3 { font-weight: 400; margin-bottom: 20px; font-size: 1.5rem; }
+    
+    .upload-form { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+    
+    select, input[type="file"] { 
+      padding: 12px 15px; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; color: var(--text); background: transparent; 
+      outline: none; transition: border 0.3s; flex: 1; min-width: 200px;
+    }
+    select:focus { border-color: var(--accent); }
+    
+    input[type="file"] { background: #f0f0f0; cursor: pointer; }
+    
+    button[type="submit"] {
+      background: var(--text); color: white; border: none; padding: 12px 30px; font-size: 1rem; border-radius: 6px;
+      cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+    }
+    button[type="submit"]:hover { background: var(--accent); }
+    
+    #uploadStatus { margin-top: 15px; font-size: 0.9rem; }
+
+    /* Gallery Grid */
+    .category-section { margin-bottom: 50px; }
+    .category-title { 
+      font-size: 1.5rem; font-weight: 400; text-transform: capitalize; margin-bottom: 20px; 
+      display: flex; align-items: center; gap: 15px;
+    }
+    .category-title::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+    .category-count { color: var(--text-light); font-size: 1rem; }
+    
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+    
+    .image-card { 
+      position: relative; border-radius: 8px; overflow: hidden; background: var(--surface); 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.3s;
+    }
+    .image-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    .image-card img { width: 100%; height: 160px; object-fit: cover; display: block; }
+    
+    .file-name { font-size: 0.75rem; padding: 12px 10px; color: var(--text-light); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-top: 1px solid #f0f0f0; }
+    
+    .delete-btn { 
+      position: absolute; top: 10px; right: 10px; background: var(--surface); color: var(--danger); 
+      border: none; border-radius: 4px; padding: 6px 12px; font-size: 0.75rem; font-weight: 500; cursor: pointer; 
+      opacity: 0; transform: translateY(-10px); transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-transform: uppercase;
+    }
+    .image-card:hover .delete-btn { opacity: 1; transform: translateY(0); }
+    .delete-btn:hover { background: var(--danger); color: white; }
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>Gallery Admin Panel</h1>
+    <a href="/" target="_blank">View Live Site ↗</a>
+  </div>
+  
+  <div class="upload-card">
+    <h3>Upload New Image</h3>
+    <form id="uploadForm" class="upload-form">
+      <select id="uploadCategory" required>
+        <option value="" disabled selected>Select Category...</option>
+        <option value="kitchen">Kitchen</option>
+        <option value="washroom">Washroom</option>
+        <option value="ceiling">Ceiling</option>
+        <option value="floor">Floor</option>
+        <option value="stairs">Stairs</option>
+      </select>
+      <input type="file" id="uploadFile" accept="image/*" required>
+      <button type="submit">Upload Image</button>
+    </form>
+    <p id="uploadStatus"></p>
+  </div>
+
+  <div id="galleryContainer"></div>
+</div>
+
+<script>
+  const SECTIONS = ['kitchen', 'washroom', 'floor', 'stairs', 'roof'];
+  const galleryContainer = document.getElementById('galleryContainer');
+  const uploadForm = document.getElementById('uploadForm');
+  const uploadStatus = document.getElementById('uploadStatus');
+
+  async function loadImages() {
+    galleryContainer.innerHTML = '<p style="color:var(--text-light)">Loading gallery data...</p>';
+    try {
+      const res = await fetch('/api/manifest');
+      const manifest = await res.json();
+      
+      galleryContainer.innerHTML = '';
+      SECTIONS.forEach(category => {
+        const files = manifest[category] || [];
+        if (files.length === 0) return; // Skip empty categories
+
+        const title = category === 'roof' ? 'ceiling' : category;
+        
+        const sectionDiv = document.createElement('div');
+        sectionDiv.className = 'category-section';
+        sectionDiv.innerHTML = `<div class="category-title">${title} <span class="category-count">${files.length} images</span></div>`;
+        
+        const grid = document.createElement('div');
+        grid.className = 'grid';
+        
+        files.forEach(fileObj => {
+          const card = document.createElement('div');
+          card.className = 'image-card';
+          card.innerHTML = `
+            <img src="${fileObj.url}" alt="${fileObj.filename}" loading="lazy">
+            <button class="delete-btn" onclick="deleteImage('${category}', '${fileObj.filename}', '${fileObj.url}')">Delete</button>
+            <div class="file-name" title="${fileObj.filename}">${fileObj.filename}</div>
+          `;
+          grid.appendChild(card);
+        });
+        
+        sectionDiv.appendChild(grid);
+        galleryContainer.appendChild(sectionDiv);
+      });
+    } catch (err) {
+      galleryContainer.innerHTML = '<p style="color:red">Failed to load images. Make sure the server is running.</p>';
+    }
+  }
+
+  uploadForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const category = document.getElementById('uploadCategory').value;
+    const actualCategory = category === 'ceiling' ? 'roof' : category; 
+    const fileInput = document.getElementById('uploadFile');
+    
+    if (!fileInput.files[0]) return;
+    
+    const formData = new FormData();
+    formData.append('category', actualCategory);
+    formData.append('image', fileInput.files[0]);
+    
+    uploadStatus.textContent = 'Uploading...';
+    uploadStatus.style.color = 'var(--text-light)';
+    
+    try {
+      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (data.success) {
+        uploadStatus.textContent = 'Upload successful!';
+        uploadStatus.style.color = 'green';
+        uploadForm.reset();
+        loadImages();
+        setTimeout(() => { uploadStatus.textContent = ''; }, 3000);
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (err) {
+      uploadStatus.textContent = 'Upload failed: ' + err.message;
+      uploadStatus.style.color = 'var(--danger)';
+    }
+  });
+
+  async function deleteImage(category, filename, url) {
+    if (!confirm(`Are you sure you want to permanently delete this image?`)) return;
+    
+    try {
+      const res = await fetch('/api/delete', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category, filename, url })
+      });
+      const data = await res.json();
+      if (data.success) {
+        loadImages();
+      } else {
+        alert('Delete failed: ' + data.error);
+      }
+    } catch (err) {
+      alert('Delete failed: ' + err.message);
+    }
+  }
+
+  // Initial load
+  loadImages();
+</script>
+</body>
+</html>
